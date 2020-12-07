@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/local/sbin/php-fpm --pid /var/run/php-fpm.pid -F

@@ -5,7 +5,7 @@ GEOIPUPDATE := 4.5.0
 VERSION := dev
 PORT := 80
 SERVICE_NAME := geoip-api
-MAXMIND_PRODUCTS := "GeoIP2-City"
+MAXMIND_PRODUCTS := "GeoLite2-City"
 
 help: ## Prints this help.
 	echo $(VERSION) ${VERSION}

@@ -1,28 +1,65 @@
 # GeoIP2 API
 
-A very simple API built with NGINX + GoeIP2 module to provide geolocation information from the IP 
+A very simple API built with NGINX + GeoIP2 module to provide geolocation information based on an IP 
 
-##### TO-DO:
+### Features
 
-- Finish makefile with CI tasks.
-- travis.yml
-- documentation
-- implement the endpoint for cities
-- auto-update the database binary 
-  
-For the moment just copy the DB from Phoenix: 
-```
-cp <PHOENIX_PATH>/app/Resources/geoip/GeoIP2-Country.mmdb ./database/GeoIP2-Country.mmdb
-```
+- Language agnostic with minimal dependencies (Nginx & GeoIP2 module)
+- Support for these databases
+    - GeoIP2-City
+    - GeoIP2-Country 
+    - GeoLite2-ASN 
+    - GeoIP2-City 
+    - GeoLite2-Country
+- What info can you get? 
+    - Continent
+    - Country
+    - City
+    - Location (accuracy, latitude, altitude, time-zone)
+- Customizable schedule for auto-update MMDB.
 
-### How it works? 
-**NOTE:** You **MUST** add the header `x-forwarded-for` with the customer IP,
-otherwise it will return the country for the direct client.
+### Start your own Geo-API
 
-Make a `GET` request to the endpoint `/country` and it will return a `json` response with this payload:
-```json
+1. **required**: Set the `MAXMIND_ACCOUNT` & `MAXMIND_KEY` variables.
+1. *optional*: Set the `MAXMIND_PRODUCT` variable with the MMDB you want to use _(default GeoIP2-City)_
+1. Build the docker image: `make build`
+1. Start the service: `make run` _(default port `80`)_
+
+#### Examples:
+- Check the status of the database: `curl localhost/_status`
+ ```json
 {
-  "code": "US",
-  "name": "United States"
+    "build": 1607405176,
+    "last_check": 1607445787,
+    "last_change": 1607445787
 }
 ```
+- Check information for a given ip: `curl -H 'x-forwarded-for: 37.223.5.39' localhost`
+```json
+{
+  "ip": "37.223.5.39",
+  "continent": {
+    "id": "6255148",
+    "code": "EU",
+    "name": "Europe"
+  },
+  "country": {
+    "id": "2510769",
+    "code": "ES",
+    "name": "Spain"
+  },
+  "city": {
+    "id": "3128760",
+    "name": "Barcelona"
+  },
+  "location": {
+    "accuracy_radius": "10",
+    "latitude": "41.38880",
+    "longitude": "2.15900",
+    "time_zone": "Europe/Madrid"
+  }
+}
+```
+
+> You **MUST** add the `x-forwarded-for` header with the client real IP,
+otherwise it will return the information of the direct client.

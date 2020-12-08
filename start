@@ -23,4 +23,5 @@ mv `ls /etc/nginx/geoip/*.mmdb | head -n 1` /etc/nginx/geoip/db.mmdb
 ln -sf /dev/stdout /var/log/nginx/access.log
 ln -sf /dev/stderr /var/log/nginx/error.log
 
-crond && nginx -g "daemon off;"
+crond
+exec nginx -g "daemon off;"

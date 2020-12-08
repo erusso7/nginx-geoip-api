@@ -3,21 +3,22 @@
 ## By default it will try to update the database
 ## Every Tuesday, Thursday, and Sunday at 10:00.
 JOB_SCHEDULE=${JOB_SCHEDULE:-"0 10 * * 2,4,7"}
+MAXMIND_PRODUCTS=${MAXMIND_PRODUCTS:-"GeoLite2-City"}
 
-echo ${MAXMIND_ACCOUNT} ${MAXMIND_KEY} ${MAXMIND_PRODUCTS} ${JOB_SCHEDULE}
-exit 0
+mkdir -p /usr/local/etc/
+cat <<GeoIP > /usr/local/etc/GeoIP.conf
+AccountID ${MAXMIND_ACCOUNT}
+LicenseKey ${MAXMIND_KEY}
+EditionIDs ${MAXMIND_PRODUCTS}
+DatabaseDirectory /etc/nginx/geoip
+GeoIP
 
-## Download initial database and configure auto-updates.
-RUN cp /geoipupdate_${GEOIPUPDATE}_linux_amd64/geoipupdate /usr/local/bin/ \
-    && mkdir -p /usr/local/etc/ \
-    && echo "AccountID ${MAXMIND_ACCOUNT}" > /usr/local/etc/GeoIP.conf \
-    && echo "LicenseKey ${MAXMIND_KEY}" >> /usr/local/etc/GeoIP.conf \
-    && echo "EditionIDs ${MAXMIND_PRODUCTS}" >> /usr/local/etc/GeoIP.conf \
-    && echo "DatabaseDirectory /etc/nginx/geoip" >> /usr/local/etc/GeoIP.conf \
-    && echo "${JOB_SCHEDULE} geoipupdate -v >> /var/log/cron.log 2>&1" >> /tmp/crontab.txt \
-    && crontab /tmp/crontab.txt \
-    && mkdir -p /etc/nginx/geoip && geoipupdate -v \
-    && mv `ls /etc/nginx/geoip/*.mmdb | head -n 1` /etc/nginx/geoip/db.mmdb
+crontab - <<Task
+${JOB_SCHEDULE} geoipupdate -v >> /var/log/cron.log 2>&1
+Task
+
+mkdir -p /etc/nginx/geoip && geoipupdate -v
+mv `ls /etc/nginx/geoip/*.mmdb | head -n 1` /etc/nginx/geoip/db.mmdb
 
 ln -sf /dev/stdout /var/log/nginx/access.log
 ln -sf /dev/stderr /var/log/nginx/error.log

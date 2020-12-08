@@ -20,22 +20,28 @@ ifndef MAXMIND_KEY
 endif
 	@echo "OK"
 
-build: check ## Build the docker image
-	docker build \
+build: ## Build the docker image
+	@docker build \
 		--build-arg NGINX=$(NGINX) \
 		--build-arg GEOIP_MOD=$(GEOIP_MOD) \
 		--build-arg GEOIPUPDATE=$(GEOIPUPDATE) \
-		--build-arg MAXMIND_ACCOUNT=$(MAXMIND_ACCOUNT) \
-		--build-arg MAXMIND_KEY=$(MAXMIND_KEY) \
-		--build-arg MAXMIND_PRODUCTS=$(MAXMIND_PRODUCTS) \
 		-t $(IMAGE_NAME):$(VERSION) \
 		.
 
-run: ## Run the service locally
-	docker run --rm --name $(SERVICE_NAME) -p $(PORT):80 -d $(IMAGE_NAME):$(VERSION)
+run: check ## Run the service locally
+	@docker run \
+		--name $(SERVICE_NAME) \
+		-p $(PORT):80 \
+		-e MAXMIND_ACCOUNT="$(MAXMIND_ACCOUNT)" \
+		-e MAXMIND_KEY="$(MAXMIND_KEY)" \
+		-e MAXMIND_PRODUCTS="$(MAXMIND_PRODUCTS)" \
+		-e JOB_SCHEDULE="$(JOB_SCHEDULE)" \
+		--rm \
+		-d \
+		$(IMAGE_NAME):$(VERSION)
 
 stop: ## Stop the service
-	docker stop $(SERVICE_NAME)
+	@docker stop $(SERVICE_NAME)
 
 exec: ## Start an interactive shell with the container
-	docker exec -it $(shell docker ps -f name=$(SERVICE_NAME) -q) sh
+	@docker exec -it $(shell docker ps -f name=$(SERVICE_NAME) -q) sh

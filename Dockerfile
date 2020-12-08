@@ -8,9 +8,9 @@ RUN apk add --no-cache \
     g++ \
     make
 
-ARG NGINX
-ARG GEOIP_MOD
-ARG GEOIPUPDATE
+ARG NGINX=1.19.5
+ARG GEOIP_MOD=3.3
+ARG GEOIPUPDATE=4.5.0
 ## Download required packages
 RUN wget https://github.com/leev/ngx_http_geoip2_module/archive/${GEOIP_MOD}.tar.gz \
     && wget https://github.com/maxmind/geoipupdate/releases/download/v${GEOIPUPDATE}/geoipupdate_${GEOIPUPDATE}_linux_amd64.tar.gz \

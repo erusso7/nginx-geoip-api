@@ -25,9 +25,9 @@ build: check ## Build the docker image
 		--build-arg NGINX=$(NGINX) \
 		--build-arg GEOIP_MOD=$(GEOIP_MOD) \
 		--build-arg GEOIPUPDATE=$(GEOIPUPDATE) \
-		--build-arg MAXMIND_ACCOUNT=$(MAXMIND_ACCOUNT) \
-		--build-arg MAXMIND_KEY=$(MAXMIND_KEY) \
-		--build-arg MAXMIND_PRODUCTS=$(MAXMIND_PRODUCTS) \
+		--env MAXMIND_ACCOUNT=$(MAXMIND_ACCOUNT) \
+		--env MAXMIND_KEY=$(MAXMIND_KEY) \
+		--env MAXMIND_PRODUCTS=$(MAXMIND_PRODUCTS) \
 		-t $(IMAGE_NAME):$(VERSION) \
 		.
 

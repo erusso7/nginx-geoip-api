@@ -41,6 +41,7 @@ RUN apk del zlib-dev g++ make \
     && rm -rf ngx_http_geoip2_module-${GEOIP_MOD}
 
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY endpoints /etc/nginx/endpoints.d
 COPY start /start
 
 CMD /start

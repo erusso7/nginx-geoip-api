@@ -1,4 +1,4 @@
-IMAGE_NAME := quay.io/typeform/goepip-api
+IMAGE_NAME := erusso/nginx-geoip-api
 NGINX := 1.19.5
 GEOIP_MOD := 3.3
 GEOIPUPDATE := 4.5.0

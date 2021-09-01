@@ -26,7 +26,7 @@ docker run --rm -d -p 80:80 \
 	-e MAXMIND_ACCOUNT="<your_maxmind_account>" \
 	-e MAXMIND_KEY="<your_maxmind_key>" \
 	-e MAXMIND_PRODUCTS="GeoIP2-City" \
-	-e JOB_SCHEDULE="0 10 * * 2,4,7" \
+	-e JOB_SCHEDULE="0 10 * * *" \
 	erusso/nginx-geoip-api
 ```
 

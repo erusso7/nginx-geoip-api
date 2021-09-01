@@ -1,9 +1,14 @@
 #!/usr/bin/env sh
 
 ## By default it will try to update the database
-## Every Tuesday, Thursday, and Sunday at 10:00.
-JOB_SCHEDULE=${JOB_SCHEDULE:-"0 10 * * 2,4,7"}
+## Every day at 10:00.
+JOB_SCHEDULE=${JOB_SCHEDULE:-"0 10 * * *"}
 MAXMIND_PRODUCTS=${MAXMIND_PRODUCTS:-"GeoLite2-City"}
+
+if [[ -z "${MAXMIND_ACCOUNT}" ]] || [[ -z "${MAXMIND_KEY}" ]]; then
+  echo "[Error] Missing environment variables MAXMIND_ACCOUNT and/or MAXMIND_KEY"
+  exit 1
+fi
 
 mkdir -p /usr/local/etc/
 cat <<GeoIP > /usr/local/etc/GeoIP.conf
@@ -24,4 +29,5 @@ ln -sf /dev/stdout /var/log/nginx/access.log
 ln -sf /dev/stderr /var/log/nginx/error.log
 
 crond
+
 exec nginx -g "daemon off;"

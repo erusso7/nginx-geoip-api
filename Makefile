@@ -11,15 +11,6 @@ help: ## Prints this help.
 	echo $(VERSION) ${VERSION}
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-check: ## Check if all the required env vars are configured
-ifndef MAXMIND_ACCOUNT
-	$(error MAXMIND_ACCOUNT is undefined in your environment)
-endif
-ifndef MAXMIND_KEY
-	$(error MAXMIND_KEY is undefined in your environment)
-endif
-	@echo "OK"
-
 build: ## Build the docker image
 	@docker build \
 		--build-arg NGINX=$(NGINX) \
@@ -28,7 +19,7 @@ build: ## Build the docker image
 		-t $(IMAGE_NAME):$(VERSION) \
 		.
 
-run: check ## Run the service locally
+run: ## Run the service locally
 	@docker run \
 		--name $(SERVICE_NAME) \
 		-p $(PORT):80 \
